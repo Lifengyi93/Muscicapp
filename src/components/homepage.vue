@@ -18,9 +18,27 @@
         <div class="rank"><p>热门排行</p></div>
       </div>
       <div class="musiclist">
-        <a href="#/playlists">推荐歌单<i class="fa fa-angle-right"></i></a>
+        <a href="#/playlists">热门歌单   <i class="fa fa-angle-right"></i></a>
+        <ul>
+          <li v-for='(item,index) in playlists' :key='index'>
+            <img :src="item.coverImgUrl" alt="">
+            <p>{{item.name}}</p>
+          </li>
+        </ul>
+      </div>
+      <div class="musiclist">
+        <a href="#/playlists">最新音乐   <i class="fa fa-angle-right"></i></a>
+        <ul>
+          <li v-for='(song,index) in songs' :key='index'>
+            <img :src="song.album.blurPicUrl" alt="">
+            <p>{{song.album.name}}<span class="right"><i class="fa fa-microphone"></i>{{song.artists[0].name}}</span></p>
+          </li>
+        </ul>
       </div>
     </el-main>
+    <el-footer height="50px">
+      <!-- Footer content -->
+    </el-footer>
   </el-container>
 </template>
 
@@ -29,7 +47,9 @@ export default {
   name: 'homepage',
   data () {
     return {
-      banners: null
+      banners: null,
+      playlists: null,
+      songs: null
     }
   },
   mounted () {
@@ -38,8 +58,11 @@ export default {
       .get('http://localhost:3000/banner')
       .then(response => (this.banners = response.data.banners))
     that.axios
-      .get('http://localhost:3000/banner')
-      .then(response => (this.banners = response.data.banners))
+      .get('http://localhost:3000/top/playlist?limit=6&order=hot')
+      .then(response => (this.playlists = response.data.playlists))
+    that.axios
+      .get('http://localhost:3000/top/song')
+      .then(response => (this.songs = response.data.data.splice(0, 6)))
   }
 }
 </script>
@@ -76,7 +99,7 @@ export default {
 }
 .active {
   position: absolute;
-  bottom: 13px;
+  bottom: 11px;
   min-width: 40px;
   text-align: center;
   right: 0;
@@ -125,5 +148,41 @@ export default {
   left:-4px;
   width:70px;
   font-size: .7em;
+}
+
+.musiclist{
+  position: relative;
+}
+.musiclist a{
+  font-size: 0.7em;
+  padding:0 0 4px 4px;
+}
+
+.musiclist ul{
+  position: relative;
+  top: 10px;
+  overflow: auto;
+}
+.musiclist ul li{
+  width:33.33%;
+  display: inline-block;
+  list-style: none;
+  font-size: 0.5em;
+  text-align: left;
+}
+.musiclist ul li img{
+  width:94%;
+  padding:0 3%;
+  border-radius:5px;
+}
+.musiclist ul li p{
+  width:94%;
+  padding:5px 3% 10px;
+  height:2em;
+  overflow: hidden;
+}
+.right{
+  float:right;
+  opacity: 0.7;
 }
 </style>
